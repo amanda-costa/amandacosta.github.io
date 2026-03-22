@@ -1,1 +1,1 @@
-# amandacosta.github.io
+# amandacosta.net

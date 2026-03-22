@@ -1,0 +1,9 @@
+:root {
+  --white: #ffffff;
+  --black: #000000;
+  --accent: hsl(250, 100%, 81%);         /* lavender #A08AFF */
+  --light-accent: hsl(60, 4%, 95%);      /* cream #F4F4F2 */
+  --dark-accent: hsl(0, 0%, 31%);        /* dark gray #4F4F4F */
+  --font-heading: 'Calistoga', serif;
+  --font-body: 'Familjen Grotesk', sans-serif;
+}

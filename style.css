@@ -1,0 +1,627 @@
+/* ==========================================================================
+   Amanda Costa - Product Designer Portfolio
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a.no-effect {
+  text-decoration: none;
+  color: inherit;
+}
+
+a.no-effect:hover,
+a.no-effect:focus,
+a.no-effect:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(79, 79, 79, 0.57);
+  height: 70px;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 100%;
+}
+
+.header .logo img {
+  height: 40px;
+}
+
+.nav-desktop {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-desktop a {
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.nav-desktop a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.nav-desktop a.active {
+  color: var(--white);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.header-social {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.header-social a {
+  color: var(--white);
+  text-decoration: none;
+  transition: color 0.3s;
+  display: flex;
+}
+
+.header-social a:hover {
+  color: var(--accent);
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile Nav */
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(79, 79, 79, 0.98);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.mobile-nav.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.mobile-nav a {
+  color: var(--white);
+  font-size: 24px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.mobile-nav a:hover,
+.mobile-nav a.active {
+  color: var(--accent);
+}
+
+.mobile-nav .social-icons {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.mobile-nav .social-icons a {
+  font-size: 20px;
+  display: flex;
+}
+
+/* ==========================================================================
+   Hero
+   ========================================================================== */
+
+.hero {
+  min-height: 60vh;
+  background-size: cover;
+  background-position: 68% 31%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 140px 0 80px;
+}
+
+.hero.subpage {
+  min-height: auto;
+  background-color: var(--white);
+  padding: 120px 0 60px;
+}
+
+.hero.subpage::before {
+  display: none;
+}
+
+.hero.subpage h1 {
+  color: var(--black);
+}
+
+.hero.subpage h2 {
+  color: var(--dark-accent);
+}
+
+.hero.hero-projetos {
+  background-color: var(--accent);
+  padding: 100px 0 40px;
+}
+
+.hero.hero-projetos h1 {
+  color: var(--white);
+  font-size: 3.2rem;
+  margin-bottom: 12px;
+}
+
+.hero.hero-projetos h2 {
+  color: rgba(255, 255, 255, 1.0);
+  font-size: 1.3rem;
+  font-weight: 400;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(200, 200, 200, 0.20);
+}
+
+.hero .container {
+  position: relative;
+  z-index: 1;
+  text-align: left;
+  max-width: 1200px;
+  width: 100%;
+}
+
+.hero h1 {
+  color: var(--white);
+  font-size: 4.5rem;
+  margin: 0 0 12px 0;
+  line-height: 1.1;
+}
+
+.hero h2 {
+  color: var(--accent);
+  font-size: 2.3rem;
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+/* ==========================================================================
+   Sections
+   ========================================================================== */
+
+.section {
+  padding: 50px 0;
+}
+
+.section-white {
+  background: var(--white);
+  color: var(--black);
+}
+
+.section-light {
+  background: var(--light-accent);
+  color: var(--black);
+}
+
+.section-dark {
+  background: var(--dark-accent);
+  color: var(--white);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4vw;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  color: var(--black);
+  margin-bottom: 40px;
+}
+
+/* ==========================================================================
+   Education (3-column)
+   ========================================================================== */
+
+.education-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.education-grid h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0px;
+}
+
+.education-grid p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-top: 5px;
+}
+
+/* ==========================================================================
+   About (2-column)
+   ========================================================================== */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-grid h2 {
+  font-size: 3rem;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.about-grid p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  color: var(--black);
+}
+
+.about-image img {
+  width: 100%;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   Skills (2-column)
+   ========================================================================== */
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 50px;
+}
+
+.skills-grid h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0px;
+  grid-column: span 2;
+}
+
+.skills-grid h3 {
+  font-size: 1.6rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--dark-accent);
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.skills-grid p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* ==========================================================================
+   Projects Grid
+   ========================================================================== */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+
+.projects-grid.listing {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.project-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  display: block;
+  text-decoration: none;
+}
+
+.project-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.project-card:hover img {
+  transform: scale(1.05);
+}
+
+.project-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  opacity: 0;
+  transition: opacity 0.3s;
+  display: flex;
+  align-items: flex-end;
+}
+
+.project-card:hover .project-overlay {
+  opacity: 1;
+}
+
+.project-overlay h3 {
+  color: var(--white);
+  font-size: 1.3rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn-outline {
+  display: inline-block;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: transparent;
+  border: 2px solid var(--black);
+  color: var(--black);
+  transition: background 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* ==========================================================================
+   Project Detail
+   ========================================================================== */
+
+.project-detail {
+  padding-top: 70px;
+  background: var(--white);
+}
+
+.project-images {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.project-images img,
+.project-images video {
+  width: 100%;
+  display: block;
+}
+
+/* ==========================================================================
+   Pagination
+   ========================================================================== */
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 4vw;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pagination a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+
+.pagination a:hover {
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+
+.footer {
+  background: var(--white);
+  padding: 30px 0;
+  text-align: center;
+}
+
+.footer .social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.footer .social-icons a {
+  color: var(--black);
+  text-decoration: none;
+  transition: color 0.3s;
+  display: flex;
+}
+
+.footer .social-icons a:hover {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+/* ==========================================================================
+   Responsive - Tablet
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero h2 {
+    font-size: 1.5rem;
+  }
+
+  .section {
+    padding: 50px 0;
+  }
+
+  .container {
+    padding: 0 6vw;
+  }
+
+  .education-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-grid .about-image {
+    order: -1;
+  }
+
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-grid h2 {
+    grid-column: span 1;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid.listing {
+    grid-template-columns: 1fr;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-desktop,
+  .header-social {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   Responsive - Mobile
+   ========================================================================== */
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+}
