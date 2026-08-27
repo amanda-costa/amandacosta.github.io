@@ -1,627 +1,1552 @@
 /* ==========================================================================
-   Amanda Costa - Product Designer Portfolio
+   Amanda Costa — Product Designer
+   Interface editorial: prancha ornitológica catalogada.
+   Depende dos tokens em styleguide.css.
    ========================================================================== */
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  -webkit-text-size-adjust: 100%;
 }
 
+/* O fundo e o texto vivem no body. O JS interpola a cor quadro a quadro
+   conforme a rolagem, então a passagem entre claro e escuro é contínua;
+   os blocos body[data-bg] abaixo são o degrau de reserva sem script. */
 body {
-  font-family: var(--font-body);
   margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  color: var(--black);
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-weight: 300;
+  font-size: clamp(15px, 1.05vw, 17px);
+  line-height: 1.65;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 400;
-}
-
-img {
+img,
+video {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 
-a.no-effect {
-  text-decoration: none;
+a {
   color: inherit;
 }
 
-a.no-effect:hover,
-a.no-effect:focus,
-a.no-effect:active {
+::selection {
+  background: var(--rosa);
+  color: var(--papel);
+}
+
+:focus-visible {
+  outline: var(--hair) solid var(--rosa);
+  outline-offset: 3px;
+}
+
+body[data-bg='petroleo'] {
+  --bg: var(--petroleo);
+  --fg: var(--on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+}
+
+body[data-bg='rosa'] {
+  --bg: var(--papel-rosa);
+  --rule: var(--traco-rosa);
+}
+
+/* Atalho de teclado para o conteúdo */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  background: var(--petroleo);
+  color: var(--papel);
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
   text-decoration: none;
-  color: inherit;
+  padding: 12px 18px;
+}
+
+.skip-link:focus {
+  left: 8px;
+  top: 8px;
+}
+
+/* --- Tipografia base --------------------------------------------------- */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-title);
+  font-weight: 500;
+  letter-spacing: var(--title-tracking);
+  margin: 0;
+}
+
+p {
+  margin: 0 0 1.1em;
+  max-width: 62ch;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+em {
+  font-style: italic;
+}
+
+/* Etiquetas — Work Sans Medium, caixa alta, tracking +14% */
+.label {
+  font-family: var(--font-label);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.label--rosa {
+  color: var(--rosa);
+}
+
+/* --- Estrutura --------------------------------------------------------- */
+
+.shell {
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--step);
+  border-top: var(--hair) solid var(--rule);
+}
+
+/* Papel levemente tingido de rosa antigo — usado só na Formação */
+.section--rosa {
+  border-top-color: var(--traco-rosa);
+}
+
+/* Cabeçalho de seção: número mono à esquerda, título serif à direita */
+.section-head {
+  margin-bottom: clamp(36px, 5vw, 64px);
+}
+
+.section-head h2 {
+  font-size: clamp(26px, 3.2vw, 40px);
+  line-height: 1.08;
+}
+
+.section-head .section-note {
+  margin-top: 14px;
+  color: var(--muted);
 }
 
 /* ==========================================================================
-   Header
+   Cabeçalho / navegação
    ========================================================================== */
 
-.header {
+/* Fio de progresso da rolagem, no topo de tudo */
+.progresso {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;
-  background: rgba(79, 79, 79, 0.57);
-  height: 70px;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  height: 100%;
-}
-
-.header .logo img {
-  height: 40px;
-}
-
-.nav-desktop {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
-.nav-desktop a {
-  color: var(--white);
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.nav-desktop a:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.nav-desktop a.active {
-  color: var(--white);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.header-social {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  margin-left: auto;
-}
-
-.header-social a {
-  color: var(--white);
-  text-decoration: none;
-  transition: color 0.3s;
-  display: flex;
-}
-
-.header-social a:hover {
-  color: var(--accent);
-}
-
-/* Hamburger */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 28px;
-  height: 20px;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 0;
-  z-index: 1001;
-}
-
-.hamburger span {
-  display: block;
-  width: 100%;
-  height: 3px;
-  background: var(--white);
-  border-radius: 2px;
-  transition: 0.3s;
-}
-
-.hamburger.open span:nth-child(1) {
-  transform: rotate(45deg) translate(6px, 6px);
-}
-
-.hamburger.open span:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.open span:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* Mobile Nav */
-.mobile-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: rgba(79, 79, 79, 0.98);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 32px;
-  z-index: 999;
-  opacity: 0;
+  height: 2px;
+  background: var(--rosa);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  z-index: 300;
   pointer-events: none;
-  transition: opacity 0.3s;
 }
 
-.mobile-nav.open {
-  opacity: 1;
-  pointer-events: all;
+/* O cabeçalho tem cor própria e não acompanha a troca de fundo da página:
+   é a única faixa fixa da tela, e piscar junto com o scroll incomodava. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  --fg: var(--on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+  background-color: var(--petroleo);
+  color: var(--on-dark);
+  border-bottom: var(--hair) solid var(--rule-dark);
 }
 
-.mobile-nav a {
-  color: var(--white);
-  font-size: 24px;
-  font-weight: 600;
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  height: 62px;
+}
+
+/* Logotipo no cabeçalho */
+.site-header__logo {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+  flex: none;
+}
+
+.site-header__logo img {
+  display: block;
+  height: 30px;
+  width: auto;
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+.nav a {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
   text-decoration: none;
-  transition: color 0.3s;
+  color: var(--muted);
+  padding-block: 4px;
+  border-bottom: var(--hair) solid transparent;
+  transition: color 0.2s, border-color 0.2s;
 }
 
-.mobile-nav a:hover,
-.mobile-nav a.active {
-  color: var(--accent);
+.nav a:hover {
+  color: var(--fg);
+  border-bottom-color: var(--rosa);
 }
 
-.mobile-nav .social-icons {
+.nav a[aria-current='page'] {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+.social {
   display: flex;
-  gap: 24px;
-  margin-top: 16px;
+  gap: 14px;
+  align-items: center;
 }
 
-.mobile-nav .social-icons a {
-  font-size: 20px;
+.social a {
   display: flex;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.social a:hover {
+  color: var(--rosa);
+}
+
+.social svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* Botão de menu */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: var(--hair) solid var(--rule);
+  color: inherit;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.menu-panel {
+  display: none;
+  border-top: var(--hair) solid var(--rule);
+  padding: 24px var(--gutter) 32px;
+  background: var(--bg);
+}
+
+.menu-panel.is-open {
+  display: block;
+}
+
+.menu-panel a {
+  display: block;
+  font-family: var(--font-title);
+  font-size: 30px;
+  text-decoration: none;
+  padding-block: 10px;
+  border-bottom: var(--hair) solid var(--rule);
+}
+
+.menu-panel .social {
+  margin-top: 24px;
 }
 
 /* ==========================================================================
-   Hero
+   Hero — prancha sangrando na tela inteira, sob um véu de papel frio
    ========================================================================== */
 
 .hero {
-  min-height: 60vh;
-  background-size: cover;
-  background-position: 68% 31%;
   position: relative;
   display: flex;
-  align-items: center;
-  padding: 140px 0 80px;
+  min-height: 100svh;
+  margin-top: -62px;
+  padding-top: 62px;
 }
 
-.hero.subpage {
-  min-height: auto;
-  background-color: var(--white);
-  padding: 120px 0 60px;
-}
-
-.hero.subpage::before {
-  display: none;
-}
-
-.hero.subpage h1 {
-  color: var(--black);
-}
-
-.hero.subpage h2 {
-  color: var(--dark-accent);
-}
-
-.hero.hero-projetos {
-  background-color: var(--accent);
-  padding: 100px 0 40px;
-}
-
-.hero.hero-projetos h1 {
-  color: var(--white);
-  font-size: 3.2rem;
-  margin-bottom: 12px;
-}
-
-.hero.hero-projetos h2 {
-  color: rgba(255, 255, 255, 1.0);
-  font-size: 1.3rem;
-  font-weight: 400;
-}
-
-.hero::before {
-  content: '';
+/* O fundo sangra até as bordas; o hero__inner respeita a grade da página. */
+.hero__fundo {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(200, 200, 200, 0.20);
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: var(--papel);
 }
 
-.hero .container {
+/* Folga vertical para o paralaxe nunca revelar a borda da imagem. */
+.hero__prancha {
+  position: absolute;
+  left: 0;
+  top: -9%;
+  width: 100%;
+  height: 118%;
+  object-fit: cover;
+  object-position: 50% 32%;
+  mix-blend-mode: multiply;
+  transform: translateY(var(--py, 0px));
+}
+
+/* Véu de azul-petróleo: escurece a prancha e devolve contraste ao texto
+   claro. O branco de antes cansava a vista e comia a leitura. */
+.hero__veu {
+  position: absolute;
+  inset: 0;
+  background: oklch(.31 .032 243 / .80);
+}
+
+.hero__inner {
   position: relative;
   z-index: 1;
-  text-align: left;
-  max-width: 1200px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(32px, 5vw, 80px);
   width: 100%;
+  padding-block: 22px clamp(32px, 4vw, 52px);
 }
 
-.hero h1 {
-  color: var(--white);
-  font-size: 4.5rem;
-  margin: 0 0 12px 0;
-  line-height: 1.1;
+.hero__topo {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 8px 28px;
+  padding-bottom: 16px;
+  border-bottom: var(--hair) solid var(--rule);
 }
 
-.hero h2 {
-  color: var(--accent);
-  font-size: 2.3rem;
-  font-family: var(--font-heading);
+.hero__credito {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
   margin: 0;
 }
 
-/* ==========================================================================
-   Sections
-   ========================================================================== */
-
-.section {
-  padding: 50px 0;
+.hero__credito {
+  color: var(--muted);
 }
 
-.section-white {
-  background: var(--white);
-  color: var(--black);
+.hero__credito em {
+  font-family: var(--font-title);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-.section-light {
-  background: var(--light-accent);
-  color: var(--black);
+/* Bloco tipográfico: cresce até encostar no pé da tela */
+.hero__display {
+  grid-column: 1;
+  align-self: end;
+  padding-top: clamp(28px, 6vw, 72px);
 }
 
-.section-dark {
-  background: var(--dark-accent);
-  color: var(--white);
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 4vw;
-}
-
-.section-title {
-  font-size: 2.5rem;
-  color: var(--black);
-  margin-bottom: 40px;
-}
-
-/* ==========================================================================
-   Education (3-column)
-   ========================================================================== */
-
-.education-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-}
-
-.education-grid h3 {
-  font-size: 1.4rem;
-  margin-bottom: 0px;
-}
-
-.education-grid p {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  margin-top: 5px;
-}
-
-/* ==========================================================================
-   About (2-column)
-   ========================================================================== */
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-
-.about-grid h2 {
-  font-size: 3rem;
-  color: var(--accent);
-  margin-bottom: 24px;
-}
-
-.about-grid p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 16px;
-  color: var(--black);
-}
-
-.about-image img {
-  width: 100%;
-  object-fit: contain;
-}
-
-/* ==========================================================================
-   Skills (2-column)
-   ========================================================================== */
-
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 50px;
-}
-
-.skills-grid h2 {
-  font-size: 2.5rem;
-  margin-bottom: 0px;
-  grid-column: span 2;
-}
-
-.skills-grid h3 {
-  font-size: 1.6rem;
-  font-family: var(--font-body);
-  font-weight: 700;
-  color: var(--dark-accent);
-  border-bottom: 3px solid var(--accent);
-  padding-bottom: 8px;
-  margin-bottom: 16px;
-}
-
-.skills-grid p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-}
-
-/* ==========================================================================
-   Projects Grid
-   ========================================================================== */
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-}
-
-.projects-grid.listing {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.project-card {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
+.hero__intro {
   display: block;
-  text-decoration: none;
+  font-family: var(--font-title);
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(28px, 4vw, 56px);
+  line-height: 1;
+  color: var(--rosa);
+  margin-bottom: clamp(6px, 1.2vw, 14px);
 }
 
-.project-card img {
+/* O nome no itálico da EB Garamond: a assinatura da prancha, e a única
+   serifada que sobrou no sistema. */
+.hero h1 {
+  font-family: var(--font-nome);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(54px, 11.8vw, 168px);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.hero__pe {
+  grid-column: 2;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(20px, 2.6vw, 30px);
+  padding-bottom: clamp(6px, 1.4vw, 16px);
+}
+
+/* Peso 400 aqui: o parágrafo cai sobre a prancha e precisa de mais corpo
+   que o texto corrido do resto da página. */
+.hero__lead {
+  font-weight: 400;
+  font-size: clamp(18px, 1.75vw, 25px);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 36ch;
+}
+
+/* ==========================================================================
+   02 · Sobre
+   ========================================================================== */
+
+.sobre {
+  display: grid;
+  grid-template-columns: minmax(0, 230px) minmax(0, 1fr) minmax(0, 390px);
+  gap: clamp(28px, 4vw, 56px);
+  align-items: stretch;
+}
+
+/* Retrato emoldurado como uma prancha catalogada: fio externo, fio interno
+   recuado e o monograma carimbado sobre a moldura. */
+.retrato {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.retrato__moldura {
+  position: relative;
+  flex: 1;
+  border: var(--hair) solid var(--rule);
+  padding: 9px;
+}
+
+.retrato__moldura::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: var(--hair) solid var(--rule);
+  pointer-events: none;
+}
+
+.retrato__foto {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s;
+  /* A moldura é em pé e a foto é deitada, então o corte é horizontal.
+     O rosto está a 71% da largura do arquivo; este valor o traz para pouco
+     à direita do centro da moldura, deixando respiro no lado para onde
+     ela olha. */
+  object-position: 83% 35%;
+  filter: contrast(1.04);
 }
 
-.project-card:hover img {
-  transform: scale(1.05);
-}
-
-.project-overlay {
+/* Selo: o ícone da marca, vazado sobre o canto da moldura */
+.retrato__selo {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  opacity: 0;
-  transition: opacity 0.3s;
+  right: -23px;
+  bottom: 24px;
+  width: 52px;
+  height: 52px;
+  border: var(--hair) solid var(--rosa);
+  border-radius: 50%;
+  background: var(--bg);
+  padding: 11px;
+  object-fit: contain;
+}
+
+/* Texto e ficha ocupam exatamente a mesma altura: o que sobrar de folga
+   se distribui entre os parágrafos, em vez de virar espaço vazio no pé. */
+.sobre__texto {
   display: flex;
-  align-items: flex-end;
-}
-
-.project-card:hover .project-overlay {
-  opacity: 1;
-}
-
-.project-overlay h3 {
-  color: var(--white);
-  font-size: 1.3rem;
-  font-family: var(--font-body);
-  font-weight: 700;
-  margin: 0;
-}
-
-/* ==========================================================================
-   Buttons
-   ========================================================================== */
-
-.btn-outline {
-  display: inline-block;
-  padding: 12px 32px;
-  border-radius: 50px;
-  font-weight: 600;
-  text-decoration: none;
-  font-family: var(--font-body);
-  font-size: 1rem;
-  background: transparent;
-  border: 2px solid var(--black);
-  color: var(--black);
-  transition: background 0.3s, color 0.3s;
-  cursor: pointer;
-}
-
-.btn-outline:hover {
-  background: var(--black);
-  color: var(--white);
-}
-
-/* ==========================================================================
-   Project Detail
-   ========================================================================== */
-
-.project-detail {
-  padding-top: 70px;
-  background: var(--white);
-}
-
-.project-images {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.project-images img,
-.project-images video {
-  width: 100%;
-  display: block;
-}
-
-/* ==========================================================================
-   Pagination
-   ========================================================================== */
-
-.pagination {
-  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  padding: 40px 4vw;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 14px;
 }
 
-.pagination a {
-  color: var(--accent);
-  font-weight: 600;
-  text-decoration: none;
-  transition: opacity 0.3s;
+.sobre__texto p {
+  margin: 0;
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.7;
 }
 
-.pagination a:hover {
-  opacity: 0.7;
+/* A ficha é o segundo selo do site — a mesma moldura picotada da trajetória,
+   aqui com o papel tingido de rosa por dentro. O `fill` na fatia central é o
+   que leva o rosa até debaixo do picote, em vez de parar num retângulo.
+   Acompanha a altura do texto ao lado: as linhas se distribuem para preencher
+   a coluna, sem sobra no pé. */
+.ficha-campo {
+  margin: 0;
+  border: 16px solid transparent;
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76' stroke-width='1'%3E%3Cpath d='M7.5,16 L7.5,7.5 H16 a7,7 0 0 1 14,0 h8 a7,7 0 0 1 14,0 h8 H68.5 V16 a7,7 0 0 1 0,14 v8 a7,7 0 0 1 0,14 v8 V68.5 H60 a7,7 0 0 1 -14,0 h-8 a7,7 0 0 1 -14,0 h-8 H7.5 V60 a7,7 0 0 1 0,-14 v-8 a7,7 0 0 1 0,-14 v-8 Z' fill='%23fbe7e7' stroke='%23e4adb1'/%3E%3Cpath d='M13.5,13.5 H62.5 V62.5 H13.5 Z' fill='none' stroke='%23f2cacd'/%3E%3C/svg%3E");
+  border-image-slice: 16 fill;
+  border-image-repeat: round;
+  padding: 4px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ficha-campo > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 14px;
+}
+
+.ficha-campo > div + div {
+  border-top: var(--hair) solid var(--traco-rosa);
+}
+
+.ficha-campo dt {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ficha-campo dd {
+  margin: 5px 0 0;
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 16.5px;
+  line-height: 1.35;
 }
 
 /* ==========================================================================
-   Footer
+   03 · Conhecimento técnico
    ========================================================================== */
 
-.footer {
-  background: var(--white);
-  padding: 30px 0;
-  text-align: center;
+.disciplinas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(28px, 4vw, 56px);
 }
 
-.footer .social-icons {
+.disciplina h3 {
+  font-size: clamp(21px, 2.2vw, 27px);
+  padding-bottom: 12px;
+  margin-bottom: 18px;
+  border-bottom: var(--hair) solid var(--rule);
+}
+
+/* O foco de cada bloco sai na cursiva do nome, em rosa antigo. O corpo
+   maior compensa a altura-x menor da Garamond ao lado da grotesca. */
+.disciplina h3 em {
+  font-family: var(--font-nome);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.16em;
+  letter-spacing: 0;
+  color: var(--rosa);
+}
+
+/* ==========================================================================
+   02 · Projetos em destaque — os dois cards da home
+   Um card por linha, deitado: o texto de um lado e a peça do outro, grande.
+   Fundo petróleo sobre a página clara — é o único bloco escuro isolado do
+   site, e é o que dá destaque sem precisar de recurso gráfico novo. O picote
+   do selo vem por dentro, em fio claro.
+   ========================================================================== */
+
+.destaques {
+  display: grid;
+  gap: clamp(20px, 2.6vw, 36px);
+}
+
+.destaque {
+  display: grid;
+  grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+  gap: clamp(26px, 3.6vw, 60px);
+  align-items: center;
+  text-decoration: none;
+  padding: clamp(16px, 1.8vw, 26px);
+  background: var(--petroleo);
+  color: var(--on-dark);
+  --bg: var(--petroleo);
+  --fg: var(--on-dark);
+  --muted: var(--muted-on-dark);
+  --rule: var(--rule-dark);
+  /* A moldura de selo entra por dentro: o card continua um retângulo cheio e o
+     picote é desenhado sobre ele em fio claro, recuado da borda. Mesma imagem
+     de borda dos outros selos, só que aqui ela decora em vez de recortar. */
+  border: 20px solid transparent;
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84' fill='none' stroke='%23eef2f4' stroke-width='1'%3E%3Cpath d='M11.5,20 L11.5,11.5 H20 a7,7 0 0 1 14,0 h8 a7,7 0 0 1 14,0 h8 H72.5 V20 a7,7 0 0 1 0,14 v8 a7,7 0 0 1 0,14 v8 V72.5 H64 a7,7 0 0 1 -14,0 h-8 a7,7 0 0 1 -14,0 h-8 H11.5 V64 a7,7 0 0 1 0,-14 v-8 a7,7 0 0 1 0,-14 v-8 Z' stroke-opacity='0.55'/%3E%3Cpath d='M17.5,17.5 H66.5 V66.5 H17.5 Z' stroke-opacity='0.26'/%3E%3C/svg%3E");
+  border-image-slice: 20;
+  border-image-repeat: round;
+  transition: background 0.25s ease;
+}
+
+/* A peça fica à direita e o texto à esquerda, mas no HTML a imagem vem antes:
+   assim, quando empilha no celular, é a peça que abre o card. */
+.destaque__img {
+  grid-column: 2;
+  grid-row: 1;
+  overflow: hidden;
+}
+
+.destaque__corpo {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(8px, 1.4vw, 22px) 0 clamp(8px, 1.4vw, 22px) clamp(8px, 1.4vw, 20px);
+}
+
+/* Quadro de 3:2 nos dois cards. A capa do Petzoo já vem nessa proporção e
+   entra inteira; a do Event é mais larga e perde uma faixa de cada lado, o
+   que preserva o logo, a frase e o celular. */
+.destaque__img img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(.22, .61, .36, 1);
+}
+
+/* No hover o selo é carimbado: a picotagem acende em rosa, a peça dá um passo
+   à frente e a chamada muda de cor. Três sinais do mesmo gesto. */
+.destaque:hover,
+.destaque:focus-visible {
+  background: var(--petroleo-2);
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84' fill='none' stroke='%23c57983' stroke-width='1'%3E%3Cpath d='M11.5,20 L11.5,11.5 H20 a7,7 0 0 1 14,0 h8 a7,7 0 0 1 14,0 h8 H72.5 V20 a7,7 0 0 1 0,14 v8 a7,7 0 0 1 0,14 v8 V72.5 H64 a7,7 0 0 1 -14,0 h-8 a7,7 0 0 1 -14,0 h-8 H11.5 V64 a7,7 0 0 1 0,-14 v-8 a7,7 0 0 1 0,-14 v-8 Z' stroke-opacity='0.9'/%3E%3Cpath d='M17.5,17.5 H66.5 V66.5 H17.5 Z' stroke-opacity='0.45'/%3E%3C/svg%3E");
+}
+
+.destaque:hover .destaque__img img,
+.destaque:focus-visible .destaque__img img {
+  transform: scale(1.04);
+}
+
+.destaque h3 {
+  margin: 14px 0 0;
+  font-size: clamp(30px, 3.4vw, 46px);
+  line-height: 1.06;
+  color: var(--on-dark);
+}
+
+.destaque p {
+  margin: 18px 0 0;
+  max-width: 40ch;
+  font-size: clamp(15px, 1.15vw, 17px);
+  line-height: 1.65;
+  color: var(--muted-on-dark);
+}
+
+/* Chamada — é um span, não um link: o card inteiro já é o link. Sem moldura:
+   dentro de um card que já é um selo, mais uma caixa era ruído. O sinal de que
+   o card é clicável é a cor, que acende em rosa quando o mouse entra nele. */
+.destaque__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(26px, 2.8vw, 40px);
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--on-dark);
+  transition: color 0.25s ease;
+}
+
+.destaque:hover .destaque__cta,
+.destaque:focus-visible .destaque__cta {
+  color: var(--rosa);
+}
+
+/* O botão estava boiando no vazio depois dos cards. Agora ele fica montado num
+   fio que atravessa a largura dos cards, como o ano na linha do tempo: o fio
+   amarra o bloco e o botão marca o fim dele. */
+.destaques__pe {
+  position: relative;
+  margin: clamp(26px, 3vw, 40px) 0 0;
+  /* é um <p>, e a regra global limita parágrafo a 62ch — era isso que jogava o
+     botão para a esquerda do eixo dos cards */
+  max-width: none;
   display: flex;
   justify-content: center;
-  gap: 24px;
 }
 
-.footer .social-icons a {
-  color: var(--black);
-  text-decoration: none;
-  transition: color 0.3s;
+.destaques__pe::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: var(--hair) solid var(--rule);
+}
+
+.destaques__pe .btn {
+  position: relative;
+  background: var(--bg);
+}
+
+/* ==========================================================================
+   03 · Experiência — linha do tempo silenciosa
+   ========================================================================== */
+
+/* Cada experiência é um selo: o retângulo externo tem mordidas quadradas
+   recortadas para dentro — a picotagem — e um segundo fio reto recuado por
+   dentro. Os cantos são retos e ficam no nível de fora, como no selo real.
+   Um fio de 1px o tempo todo — nenhum preenchimento, nenhuma sombra. À
+   esquerda corre a linha do tempo, com um traço curto ligando cada selo ao
+   trilho; só o cargo em que a leitura está tem a picotagem em rosa.
+
+   A moldura é uma imagem de borda (border-image) de 76×76 fatiada em 16: os
+   cantos ficam fixos e o miolo se repete em `round`, então a mordida se
+   mantém do mesmo tamanho em qualquer altura de card.
+   ========================================================================== */
+.tempo {
+  --edge: 16px;                        /* largura da moldura picotada       */
+  --pad-t: clamp(16px, 2vw, 28px);     /* respiro entre moldura e conteúdo  */
+  --tick: calc(var(--pad-t) + 7px);    /* altura do traço que sai do trilho */
+  --rail: clamp(64px, 6vw, 92px);      /* vão do trilho: cabe a ficha do ano */
+  --gap-y: clamp(14px, 1.6vw, 22px);
+
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 var(--rail);
+  display: grid;
+  gap: var(--gap-y);
+}
+
+.tempo__item {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: var(--pad-t) clamp(18px, 2.2vw, 30px);
+  border: var(--edge) solid transparent;
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76' fill='none' stroke-width='1'%3E%3Cpath d='M7.5,16 L7.5,7.5 H16 a7,7 0 0 1 14,0 h8 a7,7 0 0 1 14,0 h8 H68.5 V16 a7,7 0 0 1 0,14 v8 a7,7 0 0 1 0,14 v8 V68.5 H60 a7,7 0 0 1 -14,0 h-8 a7,7 0 0 1 -14,0 h-8 H7.5 V60 a7,7 0 0 1 0,-14 v-8 a7,7 0 0 1 0,-14 v-8 Z' stroke='%23d6e0e6'/%3E%3Cpath d='M13.5,13.5 H62.5 V62.5 H13.5 Z' stroke='%23e8eef1'/%3E%3C/svg%3E");
+  border-image-slice: 16;
+  border-image-repeat: round;
+}
+
+.tempo__item.is-atual {
+  border-image-source: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='76' viewBox='0 0 76 76' fill='none' stroke-width='1'%3E%3Cpath d='M7.5,16 L7.5,7.5 H16 a7,7 0 0 1 14,0 h8 a7,7 0 0 1 14,0 h8 H68.5 V16 a7,7 0 0 1 0,14 v8 a7,7 0 0 1 0,14 v8 V68.5 H60 a7,7 0 0 1 -14,0 h-8 a7,7 0 0 1 -14,0 h-8 H7.5 V60 a7,7 0 0 1 0,-14 v-8 a7,7 0 0 1 0,-14 v-8 Z' stroke='%23c57983'/%3E%3Cpath d='M13.5,13.5 H62.5 V62.5 H13.5 Z' stroke='%23eddcde'/%3E%3C/svg%3E");
+}
+
+/* Trilho da linha do tempo: cada item desenha o seu pedaço, então a linha
+   começa no primeiro traço e termina no último — sem sobra nas pontas. */
+.tempo__item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * (var(--edge) + var(--rail)));
+  top: calc(-1 * var(--edge));
+  height: calc(100% + 2 * var(--edge) + var(--gap-y));
+  border-left: var(--hair) solid var(--rule);
+  pointer-events: none;
+}
+
+.tempo__item:first-child::before {
+  top: var(--tick);
+  height: calc(100% - var(--tick) + var(--edge) + var(--gap-y));
+}
+
+.tempo__item:last-child::before {
+  top: calc(-1 * var(--edge));
+  height: calc(var(--edge) + var(--tick));
+}
+
+/* O ano é o marco da linha do tempo: uma ficha emoldurada pendurada no trilho
+   por um traço curto. A moldura é o que o separa do selo quando a tela encolhe
+   e o vão fica estreito — sem ela o ano encostava na picotagem. */
+.tempo__ano {
+  position: absolute;
+  left: calc(-1 * (var(--edge) + var(--rail)) + 10px);
+  top: var(--tick);
+  transform: translateY(-50%);
+  z-index: 1;                 /* a ficha tapa o traço, não o contrário */
+  padding: 4px 8px;
+  background: var(--bg);
+  border: var(--hair) solid var(--rule);
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.15;
+  letter-spacing: var(--title-tracking);
+  color: var(--muted);
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+
+.tempo__item.is-atual .tempo__ano {
+  color: var(--rosa);
+  border-color: var(--rosa);
+}
+
+/* Traço curto que pendura a ficha do ano no trilho */
+.tempo__item::after {
+  content: '';
+  position: absolute;
+  left: calc(-1 * (var(--edge) + var(--rail)));
+  top: var(--tick);
+  width: 10px;
+  border-top: var(--hair) solid var(--rule);
+  transition: border-color 0.45s ease;
+  pointer-events: none;
+}
+
+.tempo__item.is-atual::after {
+  border-top-color: var(--rosa);
+}
+
+.tempo__quando {
   display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
-.footer .social-icons a:hover {
-  color: var(--accent);
+/* O pinheiro guarda o espaço mesmo apagado, para o período não escorregar */
+.tempo__quando .marca {
+  flex: none;
+  width: 9px;
+  height: 12px;
+  fill: var(--rosa);
+  opacity: 0;
+  transform: translateY(3px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.tempo__quando .label {
+  transition: color 0.45s ease;
+}
+
+.tempo__item.is-atual .marca {
+  opacity: 1;
+  transform: none;
+}
+
+.tempo__item.is-atual .tempo__quando .label {
+  color: var(--rosa);
+}
+
+.tempo__oque h3 {
+  font-size: clamp(21px, 2.2vw, 28px);
+  line-height: 1.12;
+}
+
+.tempo__org {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 9px 0 14px;
+}
+
+/* Detalhe expansível: o resumo fica sempre visível e os itens abrem no
+   clique. A altura anima por grid-template-rows 0fr → 1fr, que é o jeito de
+   transicionar "até o conteúdo" sem fixar altura no CSS. */
+.detalhe {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.js .detalhe {
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s cubic-bezier(.22, .61, .36, 1);
+}
+
+.js .detalhe.is-aberto {
+  grid-template-rows: 1fr;
+}
+
+.detalhe__lista {
+  overflow: hidden;
+  min-height: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.detalhe__lista li {
+  position: relative;
+  padding-left: 18px;
+  margin-top: 14px;
+  max-width: 62ch;
+}
+
+/* Marca de item: um fio curto, no lugar do ponto de lista */
+.detalhe__lista li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 9px;
+  border-top: var(--hair) solid var(--rosa);
+}
+
+.detalhe__lista strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* O único elemento clicável dentro do selo, e por isso o único carimbado: o
+   fio externo mais um segundo fio recuado — o carimbo de cancelamento sobre o
+   selo. Sem a moldura ele se confundia com as etiquetas de metadado, que têm
+   a mesma letra. */
+.detalhe__botao {
+  position: relative;
+  display: none;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  padding: 10px 16px;
+  background: none;
+  border: var(--hair) solid var(--rule);
+  cursor: pointer;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.detalhe__botao::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: var(--hair) solid currentColor;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.js .detalhe__botao {
+  display: inline-flex;
+}
+
+.detalhe__botao:hover,
+.detalhe__botao:focus-visible {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+
+.detalhe__rotulo {
+  line-height: 1;
+}
+
+/* Sinal de mais que vira menos ao abrir */
+.detalhe__sinal {
+  position: relative;
+  width: 9px;
+  height: 9px;
+}
+
+.detalhe__sinal::before,
+.detalhe__sinal::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 9px;
+  border-top: var(--hair) solid currentColor;
+  transition: transform 0.3s ease;
+}
+
+.detalhe__sinal::after {
+  transform: rotate(90deg);
+}
+
+.detalhe__botao[aria-expanded='true'] .detalhe__sinal::after {
+  transform: rotate(0deg);
 }
 
 /* ==========================================================================
-   Utilities
+   04 · Formação — trilha horizontal
+   O fio contínuo nasce do border-top de cada coluna: por isso as colunas
+   não têm gap, e o respiro vem do padding do conteúdo.
    ========================================================================== */
 
-.text-center {
-  text-align: center;
+.trilha {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.mt-40 {
-  margin-top: 40px;
+/* Fio rosa que corre por cima do trilho cinza quando a seção entra.
+   O JS mede em que altura o trilho cai e passa em --trilho-y. */
+.trilha::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--trilho-y, 0px);
+  width: 100%;
+  border-top: var(--hair) solid var(--rosa);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 1.1s cubic-bezier(.22, .61, .36, 1);
+}
+
+.trilha.is-desenhada::after {
+  transform: scaleX(1);
+}
+
+.trilha__item {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(.22, .61, .36, 1);
+}
+
+.trilha__item:hover {
+  transform: translateY(-6px);
+}
+
+.trilha__ano {
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: clamp(32px, 4vw, 50px);
+  line-height: 1;
+  letter-spacing: var(--title-tracking);
+  color: var(--rosa);
+  padding-right: clamp(16px, 2.4vw, 34px);
+  margin-bottom: clamp(18px, 2.4vw, 26px);
+}
+
+.trilha__corpo {
+  position: relative;
+  flex: 1;
+  border-top: var(--hair) solid var(--traco-rosa);
+  padding-top: clamp(22px, 2.6vw, 30px);
+}
+
+/* Marcador quadrado: acende em sequência, atrás do fio que se desenha */
+.trilha__corpo .marca {
+  position: absolute;
+  padding: 0;
+  top: -6.5px;
+  left: -1px;
+  width: 10px;
+  height: 13px;
+  fill: var(--rosa);
+  transform: scale(0);
+  transform-origin: 50% 50%;
+  transition: transform 0.45s cubic-bezier(.34, 1.4, .64, 1);
+}
+
+.is-desenhada .trilha__corpo .marca {
+  transform: scale(1);
+  transition-delay: calc(0.24s + var(--d, 0) * 0.22s);
+}
+
+.trilha__item:hover .trilha__corpo .marca {
+  transform: scale(1.5);
+  transition-delay: 0s;
+}
+
+.trilha__ano {
+  transition: color 0.3s ease;
+}
+
+.trilha__corpo > :not(.marca) {
+  padding-right: clamp(16px, 2.4vw, 34px);
+}
+
+.trilha__corpo h3 {
+  font-size: clamp(18px, 1.7vw, 21px);
+  line-height: 1.2;
+}
+
+.trilha__org {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+
+.trilha__nota {
+  margin: 14px 0 0;
+  font-size: 14.5px;
+  color: var(--muted);
 }
 
 /* ==========================================================================
-   Responsive - Tablet
+   Botões — único elemento com cantos arredondados
    ========================================================================== */
 
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2.5rem;
+/* Botão-selo: quadrado, com um segundo fio recuado, como um carimbo. */
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 24px;
+  border-radius: 0;
+  border: var(--hair) solid currentColor;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--fg);
+  background: transparent;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn:hover {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: var(--hair) solid currentColor;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.btn--grande {
+  padding: 19px 32px;
+  font-size: 11.5px;
+}
+
+.btn span {
+  transition: transform 0.25s;
+}
+
+.btn:hover span {
+  transform: translateX(5px);
+  display: inline-block;
+}
+
+/* ==========================================================================
+   Página de projetos — índice de pranchas
+   ========================================================================== */
+
+.page-head {
+  padding-block: clamp(48px, 7vw, 88px) clamp(32px, 4vw, 52px);
+}
+
+.page-head .label {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.page-head h1 {
+  font-size: clamp(40px, 7vw, 84px);
+  line-height: 1;
+  margin-block: 18px 16px;
+}
+
+.page-head p {
+  color: var(--muted);
+  font-size: clamp(16px, 1.3vw, 18px);
+}
+
+/* O índice usa o mesmo selo da home. A diferença é o ritmo: os cards se
+   alternam de lado, um espelhando o outro, para a lista não virar uma pilha
+   de blocos iguais. */
+/* espelhado: a coluna larga acompanha a peça, que continua sendo o assunto */
+.destaques--indice .destaque:nth-child(even) {
+  grid-template-columns: minmax(0, 1.14fr) minmax(0, 0.86fr);
+}
+
+.destaques--indice .destaque:nth-child(even) .destaque__img {
+  grid-column: 1;
+}
+
+.destaques--indice .destaque:nth-child(even) .destaque__corpo {
+  grid-column: 2;
+  padding-inline: clamp(8px, 1.4vw, 20px) clamp(8px, 1.4vw, 22px);
+}
+
+/* Cabeçalho da página: a etiqueta do acervo em cima do título, com o fio
+   fechando o bloco — a mesma leitura de ficha de catálogo do resto do site. */
+/* O fio que fecha o cabeçalho é o border-top da própria seção seguinte: sem
+   isso eram duas linhas e um vão de seção inteiro entre o título e o primeiro
+   card. */
+.page-head--indice {
+  padding-bottom: clamp(20px, 2.4vw, 32px);
+}
+
+.page-head--indice + .section {
+  padding-top: clamp(26px, 3vw, 40px);
+}
+
+.page-head--indice .label {
+  color: var(--rosa);
+}
+
+.page-head__lead {
+  max-width: 54ch;
+}
+
+/* ==========================================================================
+   Estudo de caso
+   ========================================================================== */
+
+.caso-head {
+  padding-block: clamp(44px, 6vw, 80px) clamp(28px, 3.5vw, 44px);
+}
+
+.caso-head h1 {
+  font-size: clamp(40px, 7vw, 84px);
+  line-height: 1;
+  margin-block: 18px 20px;
+}
+
+.ficha-tecnica {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  border-top: var(--hair) solid var(--rule);
+  padding-top: 20px;
+  margin-top: clamp(28px, 4vw, 44px);
+}
+
+.ficha-tecnica dt {
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ficha-tecnica dd {
+  margin: 8px 0 0;
+  font-family: var(--font-title);
+  font-size: 20px;
+}
+
+/* As peças do caso correm coladas, sem fio nem legenda entre elas: a
+   leitura desce como uma faixa contínua. */
+.pranchas-caso {
+  max-width: 1400px;
+  margin-inline: auto;
+  padding-block: clamp(28px, 3.5vw, 52px);
+}
+
+.pranchas-caso img,
+.pranchas-caso video {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Fecha a fresta de subpixel que aparece entre imagens empilhadas
+     quando a altura calculada cai numa fração. */
+  margin-bottom: -1px;
+}
+
+.pranchas-caso > :last-child {
+  margin-bottom: 0;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: var(--hair) solid var(--rule);
+  padding-block: clamp(28px, 3.5vw, 44px);
+}
+
+.paginacao a {
+  font-family: var(--font-title);
+  font-size: clamp(20px, 2.4vw, 30px);
+  text-decoration: none;
+  letter-spacing: var(--title-tracking);
+  transition: color 0.2s;
+}
+
+.paginacao a:hover {
+  color: var(--rosa);
+}
+
+.paginacao .label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.paginacao > :last-child {
+  text-align: right;
+}
+
+/* ==========================================================================
+   Rodapé — colofão
+   ========================================================================== */
+
+.site-footer {
+  background: var(--petroleo-2);
+  color: var(--on-dark);
+  padding-block: clamp(48px, 6vw, 72px) 28px;
+}
+
+.site-footer__topo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+  padding-bottom: 28px;
+  border-bottom: var(--hair) solid var(--rule-dark);
+}
+
+.site-footer__marca {
+  display: block;
+  height: clamp(38px, 4.6vw, 58px);
+  width: auto;
+  margin-top: 14px;
+}
+
+.site-footer .social a {
+  color: var(--muted-on-dark);
+}
+
+.site-footer .social a:hover {
+  color: var(--rosa);
+}
+
+.colofao {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px 32px;
+  padding-top: 20px;
+  font-family: var(--font-label);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: var(--label-tracking);
+  text-transform: uppercase;
+  color: var(--muted-on-dark);
+}
+
+.colofao a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: var(--hair) solid transparent;
+}
+
+.colofao a:hover {
+  color: var(--papel);
+  border-bottom-color: var(--rosa);
+}
+
+/* ==========================================================================
+   Revelação em rolagem
+   ========================================================================== */
+
+/* Só esconde quando há JS para revelar: sem script, tudo permanece visível. */
+@media (prefers-reduced-motion: reduce) {
+  .trilha::after {
+    transform: scaleX(1);
   }
 
-  .hero h2 {
-    font-size: 1.5rem;
+  .trilha__corpo .marca {
+    transform: scale(1);
   }
 
-  .section {
-    padding: 50px 0;
+  .tempo__quando .marca {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(.22, .61, .36, 1),
+                transform 0.7s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: calc(var(--d, 0) * 90ms);
   }
 
-  .container {
-    padding: 0 6vw;
+  .js .reveal.is-in {
+    opacity: 1;
+    transform: none;
   }
 
-  .education-grid {
-    grid-template-columns: 1fr;
+  /* A prancha desliza mais devagar que a página */
+  .hero__prancha {
+    transition: none;
+    will-change: transform;
+  }
+}
+
+/* ==========================================================================
+   Responsivo
+   ========================================================================== */
+
+@media (max-width: 1000px) {
+  /* Duas colunas: a trilha quebra em duas linhas, o fio segue por coluna. */
+  .trilha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: clamp(28px, 4vw, 44px);
   }
 
-  .about-grid {
-    grid-template-columns: 1fr;
+  .sobre {
+    grid-template-columns: 200px minmax(0, 1fr);
   }
 
-  .about-grid .about-image {
-    order: -1;
+  .ficha-campo {
+    grid-column: 2;
+    max-width: 400px;
   }
 
-  .skills-grid {
-    grid-template-columns: 1fr;
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr auto;
+    row-gap: clamp(24px, 4vw, 40px);
   }
 
-  .skills-grid h2 {
-    grid-column: span 1;
+  .hero__display,
+  .hero__pe {
+    grid-column: 1;
   }
 
-  .projects-grid {
-    grid-template-columns: 1fr;
+  .hero__pe {
+    align-self: start;
+  }
+}
+
+@media (max-width: 760px) {
+  .destaque {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 10px;
   }
 
-  .projects-grid.listing {
-    grid-template-columns: 1fr;
+  .destaque,
+  .destaques--indice .destaque:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
-  .hamburger {
-    display: flex;
+  .destaque__img,
+  .destaque__corpo,
+  .destaques--indice .destaque:nth-child(even) .destaque__img,
+  .destaques--indice .destaque:nth-child(even) .destaque__corpo {
+    grid-column: 1;
+    grid-row: auto;
   }
 
-  .nav-desktop,
-  .header-social {
+  .destaque__corpo {
+    padding: 6px 4px 10px;
+  }
+
+  .nav,
+  .site-header__inner .social {
     display: none;
   }
-}
 
-/* ==========================================================================
-   Responsive - Mobile
-   ========================================================================== */
-
-@media (max-width: 480px) {
-  .hero h1 {
-    font-size: 2rem;
+  .menu-toggle {
+    display: block;
+    margin-left: auto;
   }
 
-  .section-title {
-    font-size: 1.8rem;
+  .hero__veu {
+    background: oklch(.31 .032 243 / .84);
+  }
+
+  .hero__topo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sobre {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .retrato {
+    max-width: 260px;
+  }
+
+  .retrato__moldura {
+    aspect-ratio: 3 / 4;
+  }
+
+  .ficha-campo {
+    grid-column: 1;
+  }
+
+  .tempo {
+    --rail: 60px;
+    --pad-t: 18px;
+  }
+
+  /* No celular o vão encolhe, e a ficha do ano com ele */
+  .tempo__ano {
+    font-size: 13px;
+    left: calc(-1 * (var(--edge) + var(--rail)) + 8px);
+    padding: 3px 6px;
+  }
+
+  .tempo__item::after {
+    width: 8px;
+  }
+
+  .tempo__item {
+    padding: var(--pad-t) 16px;
+  }
+
+  /* No celular a trilha vira uma faixa que rola na horizontal. */
+  .trilha {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 74%;
+    row-gap: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    padding-bottom: 10px;
+  }
+
+  .trilha__item {
+    scroll-snap-align: start;
+  }
+
+  .ficha-tecnica {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

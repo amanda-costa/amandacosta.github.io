@@ -1,0 +1,8 @@
+# Ruído do macOS
+.DS_Store
+
+# Configuração local do Claude Code
+.claude/
+
+# Foto solta na raiz, fora do fluxo do site
+22-12-31 12-24-57 3779.jpg

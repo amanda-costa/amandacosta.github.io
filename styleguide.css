@@ -1,9 +1,53 @@
+/* ==========================================================================
+   Amanda Costa — Identidade Visual V1
+   Tokens derivados do Manual de Identidade (paleta fria + destaque rosa).
+   Regras: sem sombras, sem gradientes; fios de 1px como único divisor;
+   cantos retos, exceto botões.
+   ========================================================================== */
+
 :root {
-  --white: #ffffff;
-  --black: #000000;
-  --accent: hsl(250, 100%, 81%);         /* lavender #A08AFF */
-  --light-accent: hsl(60, 4%, 95%);      /* cream #F4F4F2 */
-  --dark-accent: hsl(0, 0%, 31%);        /* dark gray #4F4F4F */
-  --font-heading: 'Calistoga', serif;
-  --font-body: 'Familjen Grotesk', sans-serif;
+  color-scheme: light;
+
+  /* --- 02 · Paleta fria + destaque ------------------------------------ */
+  --petroleo:   oklch(.31 .032 243);   /* fundo institucional            */
+  --petroleo-2: oklch(.26 .028 243);   /* variação mais profunda         */
+  --rosa:       oklch(.66 .095 12);    /* destaque — máx. 10% da página  */
+  --papel:      oklch(.955 .006 235);  /* fundo padrão                   */
+  --papel-2:    oklch(.98 .004 235);   /* papel mais claro (cartões)     */
+  --cinza:      oklch(.5 .02 240);     /* legendas e metadados           */
+  --traco:      oklch(.9 .014 235);    /* fios, listras, molduras        */
+  --papel-rosa: oklch(.945 .022 18);   /* papel tingido — seção Formação */
+  --traco-rosa: oklch(.875 .048 16);   /* fios sobre o papel tingido     */
+
+
+
+  /* --- Papéis semânticos ---------------------------------------------- */
+  --bg: var(--papel);
+  --fg: var(--petroleo);
+  --muted: var(--cinza);
+  --rule: var(--traco);
+  --rule-dark: oklch(.42 .028 243);
+  --on-dark: var(--papel);
+  --muted-on-dark: oklch(.75 .018 238);
+
+  /* --- 03 · Tipografia ------------------------------------------------- */
+  /* Grotesca de contraste alto e cortes diagonais — desenho de texto, não
+     de sistema de design. Eixo óptico variável: aperta nos títulos grandes. */
+  --font-title: 'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  /* Itálico serifado, reservado ao nome — a assinatura da prancha */
+  --font-nome: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Etiquetas em máquina de escrever: serifa reta, largura fixa, a letra dos
+     formulários de alfândega e dos carimbos postais. Não é grotesca nem
+     derivada de uma — é o terceiro gênero do sistema. */
+  --font-label: 'Courier Prime', 'Courier New', Courier, monospace;
+
+  --title-tracking: -0.025em;  /* títulos — tracking −2,5% */
+  --label-tracking: 0.045em;   /* a datilográfica já é larga: +4,5% basta */
+
+  /* --- Ritmo ----------------------------------------------------------- */
+  --shell: 1240px;
+  --gutter: clamp(20px, 5vw, 64px);
+  --hair: 1px;
+  --step: clamp(64px, 9vw, 128px);
 }
