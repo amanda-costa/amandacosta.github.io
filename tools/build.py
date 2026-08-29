@@ -28,8 +28,10 @@ PINHEIRO = ('<svg class="marca" viewBox="0 0 316 416" aria-hidden="true" focusab
             '<path d="M158 0 244 142 72 142Z M158 84 280 250 36 250Z'
             ' M158 176 316 359 0 359Z M140 359 176 359 176 416 140 416Z"/></svg>')
 
-# Currículo: fora do menu desde 26/08/2026, mas o link fica guardado aqui
-CV = 'https://drive.google.com/file/d/1pjZBLQrplAM-iKHVY3zq04LbxBkUVY1t/view?usp=drivesdk'
+# Currículo: voltou ao menu em 28/08/2026, agora servido pelo próprio site.
+# O link antigo do Drive ficava aqui e foi aposentado.
+CV = 'curriculo-amanda-costa.pdf'
+CV_NOME = 'Currículo - Amanda Costa.pdf'  # nome com que o arquivo é salvo
 
 LINKEDIN = 'https://www.linkedin.com/in/amanda-costa-142053214/'
 MAIL = LINKEDIN  # e-mail ainda não informado — contato pelo LinkedIn
@@ -72,7 +74,8 @@ def head(title, desc, base, og='img/capa-petzoo.png', bg=None):
   <meta property="og:title" content="{title}">
   <meta property="og:description" content="{desc}">
   <meta property="og:image" content="https://amandacosta.net/{og}">
-  <meta name="theme-color" content="#3d4a57">
+  <meta name="theme-color" content="#22323f">
+  <link rel="icon" type="image/svg+xml" href="{base}img/favicon.svg">
   <link rel="icon" href="{base}favicon.ico" sizes="16x16 32x32 48x48 64x64">
   <link rel="icon" type="image/png" sizes="128x128" href="{base}img/favicon-128.png">
   <link rel="icon" type="image/png" sizes="512x512" href="{base}img/favicon-512.png">
@@ -93,6 +96,12 @@ def header(base, active):
     def a(href, rotulo, key):
         cur = ' aria-current="page"' if key == active else ''
         return f'<a href="{href}"{cur}>{rotulo}</a>'
+
+    def am(href, rotulo, key):
+        # Mesma marcação, com o pinheiro que assinala onde se está — no toque
+        # não há hover, então a página atual precisa carregar a marca sozinha.
+        cur = ' aria-current="page"' if key == active else ''
+        return f'<a href="{href}"{cur}>{PINHEIRO}<span>{rotulo}</span></a>'
     return f'''
   <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
@@ -106,16 +115,23 @@ def header(base, active):
       <nav class="nav" aria-label="Principal">
         {a(base + 'index.html', 'Sobre', 'sobre')}
         {a(base + 'projetos/index.html', 'Projetos', 'projetos')}
-        <a href="{base}index.html#contato">Contato</a>
+        {a(base + 'curriculo.html', 'Currículo', 'curriculo')}
       </nav>
 {social(6)}
       <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menuPanel">Menu</button>
     </div>
     <div class="menu-panel" id="menuPanel">
-      <a href="{base}index.html">Sobre</a>
-      <a href="{base}projetos/index.html">Projetos</a>
-      <a href="{base}index.html#contato">Contato</a>
-{social(6)}
+      <div class="shell menu-panel__inner">
+        <nav class="menu-panel__nav" aria-label="Principal">
+          {am(base + 'index.html', 'Sobre', 'sobre')}
+          {am(base + 'projetos/index.html', 'Projetos', 'projetos')}
+          {am(base + 'curriculo.html', 'Currículo', 'curriculo')}
+        </nav>
+        <div class="menu-panel__pe">
+          <span class="menu-panel__rotulo">Onde me achar</span>
+{social(10)}
+        </div>
+      </div>
     </div>
   </header>
 '''
@@ -207,9 +223,9 @@ home = head('Amanda Costa — Product Designer',
         </div>
 
         <div class="hero__pe">
-          <p class="hero__lead">Product Designer situada em São Paulo. Atuo com múltiplos
-            formatos de produtos digitais, ajudando a entregar a melhor experiência para as
-            pessoas. Amo a natureza, árvores, pássaros e filmes de terror.</p>
+          <p class="hero__lead">Product Designer situada em São Paulo. Tenho experiência
+            com múltiplos formatos de produtos digitais, ajudando a entregar a melhor
+            experiência para as pessoas. Amo a natureza, árvores, pássaros e filmes de terror.</p>
           <a class="btn btn--grande" href="projetos/index.html">Conheça os meus projetos <span aria-hidden="true">&rarr;</span></a>
         </div>
       </div>
@@ -233,16 +249,14 @@ home = head('Amanda Costa — Product Designer',
             </div>
           </div>
           <div class="sobre__texto">
-            <p>Minha jornada começou na faculdade de Análise e Desenvolvimento de Sistemas, onde
-              percebi rapidamente que o meu foco não era analisar a fundo a parte técnica dos
-              sistemas, mas sim entender as pessoas que interagem com eles. Foi assim que descobri
-              minha verdadeira vocação e decidi buscar uma pós-graduação em Experiência do
-              Usuário.</p>
-            <p>Meu grande objetivo é facilitar o dia a dia das pessoas. Trabalho para que qualquer
-              usuário consiga realizar suas tarefas em produtos digitais sem lidar com
-              complexidades desnecessárias. Para mim, um bom design é aquele que encontra o ponto
-              de equilíbrio ideal, garantindo uma interface altamente satisfatória para o usuário
-              e, ao mesmo tempo, gerando resultados estratégicos valiosos para a empresa.</p>
+            <p>Iniciei minha trajetória na faculdade de Análise e Desenvolvimento de Sistemas
+              e, ao longo desse caminho, descobri que meu maior fascínio dentro da tecnologia era
+              entender as pessoas que interagem com ela. Esse mergulho me fez encontrar minha
+              verdadeira vocação e me levou à uma especialização em Experiência do Usuário.</p>
+            <p>Meu objetivo é facilitar o dia a dia de quem usa: permitir que realizem suas
+              tarefas sem esbarrar em complexidade desnecessária. Para mim, um bom design
+              equilibra os dois lados, uma interface satisfatória para o usuário e resultado
+              estratégico para a empresa.</p>
           </div>
           <dl class="ficha-campo reveal">
             <div><dt>Atuação</dt><dd>Product Design — UX &amp; UI</dd></div>
@@ -252,17 +266,12 @@ home = head('Amanda Costa — Product Designer',
             <div><dt>Base</dt><dd>São Paulo, Brasil</dd></div>
           </dl>
         </div>
-      </div>
-    </section>
 
-    <!-- 02 · Projetos em destaque -->
-    <section class="section" id="projetos" data-bg="papel">
-      <div class="shell">
-        <div class="section-head">
-          <div>
-            <h2>Conheça alguns dos meus projetos</h2>
-          </div>
-        </div>
+        <!-- 02 · Projetos em destaque — segue na mesma seção. O título desce
+             ao registro de etiqueta: continua sendo um <h2> para o leitor de
+             tela e para o sumário do documento, mas parou de anunciar um
+             capítulo novo aos olhos. -->
+        <h2 class="label destaques__titulo" id="projetos">Projetos em destaque</h2>
         <div class="destaques">
 {destaques()}
         </div>
@@ -471,6 +480,48 @@ projetos = head('Projetos | Amanda Costa',
 open(os.path.join(ROOT, 'projetos/index.html'), 'w').write(projetos)
 
 # --------------------------------------------------------------------------
+# Currículo
+# --------------------------------------------------------------------------
+
+# O visor é um <iframe> com o próprio PDF: no computador o navegador desenha
+# as duas páginas e deixa rolar. No celular quase nenhum navegador renderiza
+# PDF em iframe — mostra um quadro branco — então lá entra a imagem da
+# primeira página no lugar, e o botão continua sendo o caminho para o resto.
+curriculo = head('Currículo | Amanda Costa',
+                 'Currículo de Amanda Costa, Product Designer — formação, '
+                 'ferramentas e experiência profissional.',
+                 '') + header('', 'curriculo') + f"""
+  <main id="conteudo">
+
+    <section class="page-head page-head--indice shell">
+      <div>
+        <h1>Currículo</h1>
+      </div>
+    </section>
+
+    <section class="section shell" data-bg="papel">
+      <div class="curriculo">
+        <p class="curriculo__acoes">
+          <a class="btn btn--grande btn--baixar" href="{CV}" download="{CV_NOME}"
+             type="application/pdf">Baixar em PDF <span aria-hidden="true">&darr;</span></a>
+          <span class="curriculo__meta">PDF &middot; 2 páginas &middot; 102 KB</span>
+        </p>
+        <div class="curriculo__moldura reveal">
+          <iframe class="curriculo__visor" src="{CV}#toolbar=0&amp;navpanes=0&amp;view=FitH"
+                  title="Currículo de Amanda Costa em PDF" loading="lazy"></iframe>
+          <img class="curriculo__previa" src="img/curriculo-previa.png"
+               alt="Primeira página do currículo de Amanda Costa" loading="lazy"
+               width="990" height="1400">
+        </div>
+      </div>
+    </section>
+
+  </main>
+""" + footer('')
+
+open(os.path.join(ROOT, 'curriculo.html'), 'w').write(curriculo)
+
+# --------------------------------------------------------------------------
 # Estudos de caso
 # --------------------------------------------------------------------------
 
@@ -489,6 +540,7 @@ CASOS = {
            ('../img/projetos/petzoo/5.jpg', 'Resultados', 'img'),
            ('../img/projetos/petzoo/6.jpg', 'Conclusão', 'img'),
            ('../img/projetos/petzoo/video-preview.mp4', 'Protótipo navegável', 'video'),
+           ('../img/projetos/petzoo/dog.mp4', 'Animação do mascote', 'video'),
            ('../img/projetos/petzoo/frame-final.png', 'Telas finais', 'img')],
     ant=None, prox=('event.html', 'Event')),
  'event': dict(

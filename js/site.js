@@ -14,17 +14,27 @@
   var panel = document.getElementById('menuPanel');
 
   if (toggle && panel) {
-    toggle.addEventListener('click', function () {
-      var aberto = panel.classList.toggle('is-open');
+    function menu(aberto) {
+      panel.classList.toggle('is-open', aberto);
       toggle.setAttribute('aria-expanded', String(aberto));
       toggle.textContent = aberto ? 'Fechar' : 'Menu';
+      // O painel cobre a tela inteira: sem travar o corpo, a rolagem do dedo
+      // atravessa e a página anda por baixo do menu.
+      document.body.classList.toggle('menu-aberto', aberto);
+    }
+
+    toggle.addEventListener('click', function () {
+      menu(!panel.classList.contains('is-open'));
     });
 
     panel.addEventListener('click', function (e) {
-      if (e.target.tagName !== 'A') return;
-      panel.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.textContent = 'Menu';
+      // O alvo pode ser o <span> do nome ou o pinheiro, não só o <a>.
+      if (!e.target.closest || !e.target.closest('a')) return;
+      menu(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) menu(false);
     });
   }
 
@@ -66,8 +76,8 @@
 
   // Cada bloco declara em que papel vive. Em vez de trocar a cor de uma vez
   // quando o bloco cruza o meio da tela, a cor é interpolada em oklch ao
-  // longo de meia tela de rolagem — a passagem entre claro e escuro vira um
-  // esmaecimento contínuo, sem degrau.
+  // longo de mais de uma tela de rolagem — a passagem entre claro e escuro
+  // vira um esmaecimento contínuo, sem degrau.
   var blocos = [].slice.call(document.querySelectorAll('[data-bg]'))
     .filter(function (el) { return el !== document.body; });
 
@@ -102,6 +112,10 @@
     return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, h];
   }
 
+  // Smoothstep, e não smootherstep: o smootherstep amacia mais as pontas,
+  // mas em troca amontoa a mudança no meio — inclinação de pico 1,875 contra
+  // 1,5. O que se percebe como choque é justamente o trecho mais rápido, e
+  // não a partida. Aqui o que importa é achatar o pico.
   function suave(t) {
     return t * t * (3 - 2 * t);
   }
@@ -121,23 +135,29 @@
     if (!blocos || !blocos.length) return;
 
     var meio = window.innerHeight / 2;
-    var base = window.innerHeight * 0.55;
+    // A passagem se estende por mais de uma tela de rolagem: quanto mais
+    // longo o percurso, menor o salto de cor por quadro. Com 1.2 de tela e a
+    // trava de bloco em 0.95, a mudança de claridade no trecho mais rápido
+    // cai de 0,28 para 0,16 por 100px de rolagem.
+    var base = window.innerHeight * 1.2;
     var caixas = blocos.map(function (el) { return el.getBoundingClientRect(); });
     var atual = paletas[0].slice();
 
     for (var i = 1; i < blocos.length; i++) {
-      // A zona nunca ultrapassa metade do bloco mais curto da fronteira:
-      // do contrário duas passagens se sobrepõem e a cor cheia nunca chega.
-      var zona = Math.min(base, caixas[i - 1].height * 0.55, caixas[i].height * 0.55);
+      // A zona é centrada na fronteira, então come metade de cada bloco
+      // vizinho: acima de 1 altura duas passagens se sobrepõem e a cor cheia
+      // nunca chega. 0.95 é o máximo com folga — e é essa trava, não a base,
+      // que limita a passagem junto dos blocos curtos.
+      var zona = Math.min(base, caixas[i - 1].height * 0.95, caixas[i].height * 0.95);
       var f = (meio - (caixas[i].top - zona / 2)) / zona;
       if (f <= 0) break;
       if (f > 1) f = 1;
 
       // O fundo desliza por toda a zona; a tinta (texto, fios) segura a cor
-      // de origem e vira depressa perto do meio. Assim o instante em que as
-      // duas se cruzam em tons médios — e o contraste cai — fica curto.
+      // de origem e vira no terço do meio. Assim o instante em que as duas se
+      // cruzam em tons médios — e o contraste cai — fica curto.
       var fFundo = suave(f);
-      var fTinta = suave(Math.max(0, Math.min(1, (f - 0.42) / 0.16)));
+      var fTinta = suave(Math.max(0, Math.min(1, (f - 0.36) / 0.28)));
 
       atual[0] = misturar(atual[0], paletas[i][0], fFundo);
       for (var v = 1; v < VARS.length; v++) {

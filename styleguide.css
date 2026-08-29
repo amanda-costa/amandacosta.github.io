@@ -49,5 +49,5 @@
   --shell: 1240px;
   --gutter: clamp(20px, 5vw, 64px);
   --hair: 1px;
-  --step: clamp(64px, 9vw, 128px);
+  --step: clamp(48px, 6.4vw, 92px);
 }
