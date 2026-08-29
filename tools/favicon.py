@@ -7,8 +7,10 @@ convertidas de oklch para hex — o navegador entende oklch, o PNG e o ICO não.
 
 Uso: python3 tools/favicon.py
 """
+import io
 import math
 import os
+import struct
 from PIL import Image, ImageDraw
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -82,6 +84,38 @@ def svg():
     )
 
 
+def escreve_ico(caminho, tamanhos):
+    """Monta o .ico à mão, com um PNG por tamanho.
+
+    O `sizes=` do Pillow reamostra um único desenho para os outros tamanhos —
+    e, do jeito que dá para chamá-lo aqui, saiu um .ico com uma entrada só de
+    16x16, que o navegador tinha de ampliar em tela retina. Um .ico é só um
+    cabeçalho seguido dos arquivos embutidos, então escrevê-lo direto custa
+    pouco e mantém cada tamanho com o desenho que foi feito para ele.
+    """
+    quadros = []
+    for lado in tamanhos:
+        buf = io.BytesIO()
+        desenha(lado).save(buf, format='PNG', optimize=True)
+        quadros.append(buf.getvalue())
+
+    cabecalho = struct.pack('<HHH', 0, 1, len(quadros))  # reservado, tipo 1, nº de ícones
+    offset = 6 + 16 * len(quadros)
+    diretorio = b''
+    for lado, png in zip(tamanhos, quadros):
+        diretorio += struct.pack(
+            '<BBBBHHII',
+            lado if lado < 256 else 0, lado if lado < 256 else 0,
+            0, 0,      # paleta e reservado
+            1, 32,     # planos de cor, bits por pixel
+            len(png), offset,
+        )
+        offset += len(png)
+
+    with open(caminho, 'wb') as f:
+        f.write(cabecalho + diretorio + b''.join(quadros))
+
+
 def main():
     with open(os.path.join(RAIZ, 'img', 'favicon.svg'), 'w') as f:
         f.write(svg())
@@ -89,11 +123,7 @@ def main():
         desenha(lado).save(os.path.join(RAIZ, 'img', f'favicon-{lado}.png'))
     # O .ico guarda os tamanhos pequenos, cada um redesenhado — reduzir o
     # grande borra o tronco de 36 unidades de largura.
-    tamanhos = [16, 32, 48, 64]
-    quadros = [desenha(t) for t in tamanhos]
-    quadros[0].save(os.path.join(RAIZ, 'favicon.ico'),
-                    append_images=quadros[1:],
-                    sizes=[(t, t) for t in tamanhos])
+    escreve_ico(os.path.join(RAIZ, 'favicon.ico'), [16, 32, 48, 64])
     print('img/favicon.svg, img/favicon-128.png, img/favicon-512.png, favicon.ico')
 
 

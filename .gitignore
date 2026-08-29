@@ -6,3 +6,6 @@
 
 # Foto solta na raiz, fora do fluxo do site
 22-12-31 12-24-57 3779.jpg
+
+# Cache do Python, quando um script de tools/ é importado por outro
+__pycache__/
