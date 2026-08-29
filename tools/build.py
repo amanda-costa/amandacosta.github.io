@@ -75,8 +75,11 @@ def head(title, desc, base, og='img/capa-petzoo.png', bg=None):
   <meta property="og:description" content="{desc}">
   <meta property="og:image" content="https://amandacosta.net/{og}">
   <meta name="theme-color" content="#22323f">
-  <link rel="icon" type="image/svg+xml" href="{base}img/favicon.svg">
+  <!-- O .ico vem primeiro de propósito: o Safari pega o primeiro rel="icon"
+       da lista e não desenha SVG aí. Com o SVG na frente ele fica sem ícone e
+       cai no quadrado com a letra do site. -->
   <link rel="icon" href="{base}favicon.ico" sizes="16x16 32x32 48x48 64x64">
+  <link rel="icon" type="image/svg+xml" href="{base}img/favicon.svg">
   <link rel="icon" type="image/png" sizes="128x128" href="{base}img/favicon-128.png">
   <link rel="icon" type="image/png" sizes="512x512" href="{base}img/favicon-512.png">
   <link rel="apple-touch-icon" href="{base}img/favicon-512.png">
