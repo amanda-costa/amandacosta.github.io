@@ -215,34 +215,6 @@ em {
   width: auto;
 }
 
-.nav {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-
-.nav a {
-  font-family: var(--font-label);
-  font-weight: 400;
-  font-size: 12px;
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--muted);
-  padding-block: 4px;
-  border-bottom: var(--hair) solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.nav a:hover {
-  color: var(--fg);
-  border-bottom-color: var(--rosa);
-}
-
-.nav a[aria-current='page'] {
-  color: var(--fg);
-  border-bottom-color: var(--fg);
-}
 
 .social {
   display: flex;
@@ -267,7 +239,7 @@ em {
 
 /* Botão de menu — o mesmo selo dos outros botões, em escala de cabeçalho */
 .menu-toggle {
-  display: none;
+  display: block;
   position: relative;
   background: none;
   border: var(--hair) solid var(--rule);
@@ -424,6 +396,156 @@ body.menu-aberto {
 }
 
 /* ==========================================================================
+   Dock (desktop) — a navegação fica numa barra fixa na lateral esquerda, como
+   o Dock do macOS: ícones que crescem perto do cursor, rótulo ao lado e a
+   página atual com o ícone cheio, em rosa.
+   ========================================================================== */
+
+/* No celular o menu de tela cheia continua sendo a navegação */
+.dock {
+  display: none;
+}
+
+@media (min-width: 761px) {
+  /* A dock carrega a marca e a navegação: o cabeçalho, com o botão Menu e o
+     painel dentro dele, só existe no celular. */
+  .site-header {
+    display: none;
+  }
+
+  html {
+    scroll-padding-top: 24px;
+  }
+
+  /* Se o menu estava aberto quando a janela alargou, não deixa a página presa */
+  body.menu-aberto {
+    overflow: visible;
+  }
+
+  /* Petróleo fixo translúcido, e não var(--bg): o --bg é interpolado pela
+     rolagem, e a dock atravessa trechos claros e escuros. O desfoque segura a
+     leitura dos ícones sobre as pranchas. A borda é a do botão-selo: fio
+     externo e um segundo fio recuado 3px, a 40%. */
+  .dock {
+    --tile: 42px;
+    position: fixed;
+    left: 16px;
+    top: 50%;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 12px 12px 18px;
+    color: var(--on-dark);
+    background-color: oklch(.31 .032 243 / .72);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: var(--hair) solid currentColor;
+    transform: translateY(-50%);
+  }
+
+  .dock::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: var(--hair) solid currentColor;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* --s vem do JS: 1 em repouso, até 1,5 sob o cursor. Os ícones crescem
+     para longe da borda da tela, como no Dock encostado à esquerda. */
+  .dock__item {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: calc(var(--tile) * var(--s, 1));
+    height: calc(var(--tile) * var(--s, 1));
+    color: var(--muted-on-dark);
+    transition: width 0.16s ease-out, height 0.16s ease-out, color 0.2s;
+  }
+
+  .dock__item:hover,
+  .dock__item:focus-visible {
+    color: var(--on-dark);
+  }
+
+  /* Página atual: o build troca o ícone pela versão cheia, e aqui ele fica rosa */
+  .dock__item[aria-current='page'] {
+    color: var(--rosa);
+  }
+
+  .dock__icone {
+    width: 56%;
+    height: 56%;
+  }
+
+  /* As marcas das redes são cheias e pesam mais que os ícones de traço */
+  .dock__icone--rede {
+    width: 42%;
+    height: 42%;
+  }
+
+  .dock__fio {
+    align-self: stretch;
+    height: var(--hair);
+    margin-block: 6px;
+    background-color: var(--rule-dark);
+  }
+
+  /* A marca no topo não cresce sob o cursor: é assinatura, não item de menu */
+  .dock__inicio {
+    display: grid;
+    place-items: center;
+    width: var(--tile);
+    height: var(--tile);
+  }
+
+  .dock__pinheiro {
+    width: 17px;
+    height: 22px;
+    fill: var(--rosa);
+  }
+
+  .dock__rotulo {
+    position: absolute;
+    left: calc(100% + 22px);
+    top: 50%;
+    padding: 5px 10px 4px;
+    font-family: var(--font-label);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: var(--label-tracking);
+    text-transform: uppercase;
+    line-height: 1.4;
+    white-space: nowrap;
+    color: var(--on-dark);
+    background-color: var(--petroleo);
+    border: var(--hair) solid var(--rule-dark);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-4px, -50%);
+    transition: opacity 0.18s, visibility 0.18s, transform 0.18s;
+    pointer-events: none;
+  }
+
+  .dock__item:hover .dock__rotulo,
+  .dock__item:focus-visible .dock__rotulo {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+  }
+}
+
+@media (min-width: 761px) and (prefers-reduced-motion: reduce) {
+  .dock__item,
+  .dock__rotulo {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
    Hero — prancha sangrando na tela inteira, sob um véu de papel frio
    ========================================================================== */
 
@@ -438,6 +560,14 @@ body.menu-aberto {
   min-height: min(86svh, 760px);
   margin-top: -62px;
   padding-top: 62px;
+}
+
+/* No desktop não há cabeçalho para o hero passar por baixo */
+@media (min-width: 761px) {
+  .hero {
+    margin-top: 0;
+    padding-top: 0;
+  }
 }
 
 /* O fundo sangra até as bordas; o hero__inner respeita a grade da página. */
@@ -1676,11 +1806,6 @@ body.menu-aberto {
 
   .destaque__corpo {
     padding: 6px 4px 10px;
-  }
-
-  .nav,
-  .site-header__inner .social {
-    display: none;
   }
 
   .menu-toggle {

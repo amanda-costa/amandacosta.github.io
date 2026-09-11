@@ -28,8 +28,9 @@ PINHEIRO = ('<svg class="marca" viewBox="0 0 316 416" aria-hidden="true" focusab
             '<path d="M158 0 244 142 72 142Z M158 84 280 250 36 250Z'
             ' M158 176 316 359 0 359Z M140 359 176 359 176 416 140 416Z"/></svg>')
 
-# Currículo: voltou ao menu em 28/08/2026, agora servido pelo próprio site.
-# O link antigo do Drive ficava aqui e foi aposentado.
+# Currículo: servido pelo próprio site em curriculo.html. Esteve no menu de
+# 28/08 a 11/09/2026 e saiu a pedido; a página e o PDF seguem no build,
+# acessíveis pela URL direta. O link antigo do Drive foi aposentado.
 CV = 'curriculo-amanda-costa.pdf'
 CV_NOME = 'Currículo - Amanda Costa.pdf'  # nome com que o arquivo é salvo
 
@@ -95,14 +96,73 @@ def head(title, desc, base, og='img/capa-petzoo.png', bg=None):
 '''
 
 
-def header(base, active):
-    def a(href, rotulo, key):
-        cur = ' aria-current="page"' if key == active else ''
-        return f'<a href="{href}"{cur}>{rotulo}</a>'
+# Ícones de traço da dock, desenhados no mesmo fio de 1px do resto do site:
+# Sobre é um retrato na moldura, Projetos são duas pranchas sobrepostas.
+# O non-scaling-stroke mantém o fio fino quando o ícone cresce sob o cursor.
+TRACO = ('<svg class="dock__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor"'
+         ' stroke-width="1.25" aria-hidden="true" focusable="false">{}</svg>')
+DOCK_ICONES = {
+    'sobre': '<rect x="5.5" y="3.5" width="13" height="17" vector-effect="non-scaling-stroke"/>'
+             '<circle cx="12" cy="10" r="2.75" vector-effect="non-scaling-stroke"/>'
+             '<path d="M8 17.5c.8-2.4 2.2-3.5 4-3.5s3.2 1.1 4 3.5" vector-effect="non-scaling-stroke"/>',
+    'projetos': '<path d="M8.5 6.5v-3h12v14h-3" vector-effect="non-scaling-stroke"/>'
+                '<rect x="3.5" y="6.5" width="14" height="14" vector-effect="non-scaling-stroke"/>',
+}
 
+# Versões cheias dos mesmos desenhos, para a página atual. Um traço não se
+# preenche sem virar mancha, então cada uma é um recorte: no retrato, rosto e
+# ombros vazados na moldura (evenodd); nas pranchas, a da frente sólida e a de
+# trás como um L separado dela por uma folga.
+CHEIO = ('<svg class="dock__icone" viewBox="0 0 24 24" fill="currentColor"'
+         ' aria-hidden="true" focusable="false">{}</svg>')
+DOCK_CHEIOS = {
+    'sobre': '<path fill-rule="evenodd" d="M5 3H19V21H5Z'
+             'M14.75 10a2.75 2.75 0 1 1-5.5 0a2.75 2.75 0 1 1 5.5 0Z'
+             'M8 17.5C8.8 15.1 10.2 14 12 14S15.2 15.1 16 17.5Z"/>',
+    'projetos': '<path d="M7 3H21V17H18.5V5.5H7Z"/><path d="M3 7H17V21H3Z"/>',
+}
+
+
+def dock(base, active):
+    # Desktop: a navegação é uma dock fixa na lateral esquerda, como a do
+    # macOS, e substitui o cabeçalho. A página atual troca o ícone de traço
+    # pela versão cheia, em rosa (a cor vem do CSS). Os rótulos aparecem ao
+    # lado no hover; para leitores de tela o nome vem do aria-label.
+    def item(href, rotulo, key):
+        if key == active:
+            cur = ' aria-current="page"'
+            icone = CHEIO.format(DOCK_CHEIOS[key])
+        else:
+            cur = ''
+            icone = TRACO.format(DOCK_ICONES[key])
+        return (f'<a class="dock__item" href="{href}" aria-label="{rotulo}"{cur}>{icone}'
+                f'<span class="dock__rotulo" aria-hidden="true">{rotulo}</span></a>')
+
+    redes = '\n    '.join(
+        f'<a class="dock__item" href="{url}" target="_blank" rel="noopener" aria-label="{name}">'
+        f'<svg class="dock__icone dock__icone--rede" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">'
+        f'{ICONS[name]}</svg><span class="dock__rotulo" aria-hidden="true">{name}</span></a>'
+        for name, url in LINKS.items())
+    # No desktop o cabeçalho sai de cena, e o pinheiro da marca sobe para o
+    # topo da dock como o caminho de volta ao início.
+    pinheiro = PINHEIRO.replace('class="marca"', 'class="dock__pinheiro"')
+    return f'''
+  <nav class="dock" aria-label="Principal">
+    <a class="dock__inicio" href="{base}index.html" aria-label="Amanda Costa — início">{pinheiro}</a>
+    <span class="dock__fio" aria-hidden="true"></span>
+    {item(base + 'index.html', 'Sobre', 'sobre')}
+    {item(base + 'projetos/index.html', 'Projetos', 'projetos')}
+    <span class="dock__fio" aria-hidden="true"></span>
+    {redes}
+  </nav>
+'''
+
+
+def header(base, active):
     def am(href, rotulo, key):
-        # Mesma marcação, com o pinheiro que assinala onde se está — no toque
-        # não há hover, então a página atual precisa carregar a marca sozinha.
+        # O pinheiro assinala onde se está — no toque não há hover, então a
+        # página atual precisa carregar a marca sozinha. Este menu de tela
+        # cheia é só do celular; no desktop a navegação é a dock().
         cur = ' aria-current="page"' if key == active else ''
         return f'<a href="{href}"{cur}>{PINHEIRO}<span>{rotulo}</span></a>'
     return f'''
@@ -115,12 +175,6 @@ def header(base, active):
       <a class="site-header__logo" href="{base}index.html">
         <img src="{base}img/logo-claro.png" alt="Amanda Costa" width="1040" height="240">
       </a>
-      <nav class="nav" aria-label="Principal">
-        {a(base + 'index.html', 'Sobre', 'sobre')}
-        {a(base + 'projetos/index.html', 'Projetos', 'projetos')}
-        {a(base + 'curriculo.html', 'Currículo', 'curriculo')}
-      </nav>
-{social(6)}
       <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="menuPanel">Menu</button>
     </div>
     <div class="menu-panel" id="menuPanel">
@@ -128,7 +182,6 @@ def header(base, active):
         <nav class="menu-panel__nav" aria-label="Principal">
           {am(base + 'index.html', 'Sobre', 'sobre')}
           {am(base + 'projetos/index.html', 'Projetos', 'projetos')}
-          {am(base + 'curriculo.html', 'Currículo', 'curriculo')}
         </nav>
         <div class="menu-panel__pe">
           <span class="menu-panel__rotulo">Onde me achar</span>
@@ -137,7 +190,7 @@ def header(base, active):
       </div>
     </div>
   </header>
-'''
+''' + dock(base, active)
 
 
 def footer(base):
@@ -315,91 +368,7 @@ home = head('Amanda Costa — Product Designer',
       </div>
     </section>
 
-    <!-- 04 · Experiência -->
-    <section class="section" id="experiencia" data-bg="papel">
-      <div class="shell">
-      <div class="section-head">
-        <div>
-          <h2>Trajetória profissional</h2>
-          <p class="section-note">Produtos digitais para marcas de grande alcance e para
-            operações de financeiro, marketplace, locação, agendamento e SaaS.</p>
-        </div>
-      </div>
-      <ol class="tempo">
-        <li class="tempo__item reveal" style="--d:0">
-          <span class="tempo__ano" aria-hidden="true">2026</span>
-          <div class="tempo__quando">
-            {PINHEIRO}
-            <span class="label">jul 2026 — o momento</span>
-          </div>
-          <div class="tempo__oque">
-            <h3>Experience Designer — Pleno</h3>
-            <p class="tempo__org">Equifax | BoaVista · Barueri, SP · Híbrido</p>
-            <p>Atuação focada no design de produtos e na melhoria contínua de interfaces, utilizando as práticas de Customer Experience (CX) e a análise da Voz do Cliente (VoC) como ferramentas estratégicas complementares para embasar e validar as decisões de design.</p>
-            <div class="detalhe" id="exp-cx">
-              <ul class="detalhe__lista">
-              <li><strong>Evolução de Jornadas e Portais:</strong> Mapeamento aprofundado de jornadas do usuário e condução do redesign de portais de clientes. Estruturação de materiais de apoio focados em melhorar a usabilidade e reduzir fricções, impactando diretamente na redução de chamados de suporte.</li>
-              <li><strong>Melhorias no Portal Financeiro:</strong> Atuação dedicada a evoluir a usabilidade da plataforma. Conduzi o redesign da fatura para simplificar e promover o entendimento do cliente em relação as informações e aos dados de consumo. Desenvolvi soluções focadas em UI e Arquitetura da Informação para garantir clareza e facilitar a navegação entre fluxos complexos.</li>
-              <li><strong>Alinhamento Estratégico (Design e Operação):</strong> Trabalho colaborativo e contínuo com as equipes de Produto e Suporte, traduzindo dados quantitativos e feedbacks qualitativos da operação em soluções de design de interface e experiência cada vez mais assertivas.</li>
-              </ul>
-            </div>
-            <button class="detalhe__botao" type="button" aria-expanded="false" aria-controls="exp-cx">
-              <span class="detalhe__rotulo">Ver detalhes</span>
-              <span class="detalhe__sinal" aria-hidden="true"></span>
-            </button>
-          </div>
-        </li>
-        <li class="tempo__item reveal" style="--d:1">
-          <span class="tempo__ano" aria-hidden="true">2025</span>
-          <div class="tempo__quando">
-            {PINHEIRO}
-            <span class="label">set 2025 — jul 2026</span>
-          </div>
-          <div class="tempo__oque">
-            <h3>UX/UI Designer — Pleno</h3>
-            <p class="tempo__org">Equifax | BoaVista · Barueri, SP · Híbrido</p>
-            <p>Responsável por estruturar e evoluir plataformas internas e externas, liderando o design de ponta a ponta com uma abordagem fortemente orientada a dados (data-driven) e foco em eficiência operacional.</p>
-            <div class="detalhe" id="exp-ux">
-              <ul class="detalhe__lista">
-              <li><strong>Design Zero-to-One:</strong> Liderança no design completo do produto Access Manager. O processo abrangeu desde estudos de mercado e definição da arquitetura da informação até a criação de interfaces acessíveis e validação de viabilidade técnica frente aos sistemas legados.</li>
-              <li><strong>UX Research e Validação com Dados:</strong> Análise contínua de volumetria de chamados e casos de uso para identificar reais pontos de dor na jornada do usuário. Esse acompanhamento constante permitiu validar hipóteses de design com precisão e mensurar o impacto das entregas.</li>
-              <li><strong>Inovação e Automação no Design:</strong> Utilização de Inteligência Artificial (Gemini e NotebookLM) para sintetizar e agilizar a análise de dados de pesquisa de UX. Construção de dashboards operacionais no Looker Studio para acompanhar o impacto do design nos números do negócio, além do uso de Apps Script para estruturação de páginas.</li>
-              </ul>
-            </div>
-            <button class="detalhe__botao" type="button" aria-expanded="false" aria-controls="exp-ux">
-              <span class="detalhe__rotulo">Ver detalhes</span>
-              <span class="detalhe__sinal" aria-hidden="true"></span>
-            </button>
-          </div>
-        </li>
-        <li class="tempo__item reveal" style="--d:2">
-          <span class="tempo__ano" aria-hidden="true">2023</span>
-          <div class="tempo__quando">
-            {PINHEIRO}
-            <span class="label">ago 2023 — jun 2025</span>
-          </div>
-          <div class="tempo__oque">
-            <h3>UI/UX Designer</h3>
-            <p class="tempo__org">Alphacode IT Solutions · São Paulo, SP · Presencial</p>
-            <p>Atuei no ciclo completo de design (end-to-end) em um ambiente dinâmico de consultoria, projetando aplicativos mobile, sites e CRMs para grandes contas do mercado (como Madero, KFC, Domino’s, Unilever e Volvo) em segmentos como bancos digitais, delivery e marketplaces.</p>
-            <div class="detalhe" id="exp-alpha">
-              <ul class="detalhe__lista">
-              <li><strong>Design de Interfaces e Usabilidade:</strong> Responsável pela criação de fluxos de navegação (user flows), wireframes e protótipos de alta fidelidade, sempre com foco em usabilidade avançada e otimização de conversão para produtos de alto tráfego.</li>
-              <li><strong>Construção de Design Systems:</strong> Liderei a criação e estruturação de bibliotecas de componentes do zero. Esse trabalho garantiu consistência visual através de múltiplos produtos e escalabilidade técnica para os times de desenvolvimento.</li>
-              <li><strong>Discovery e Qualidade de Entrega:</strong> Conduzi imersões em modelos de negócio, benchmarks e testes de usabilidade. Na ponta final do processo, atuei lado a lado com os desenvolvedores, garantindo a viabilidade técnica das propostas, realizando o handoff detalhado e conduzindo auditorias de design (Design QA) em ambiente de homologação.</li>
-              </ul>
-            </div>
-            <button class="detalhe__botao" type="button" aria-expanded="false" aria-controls="exp-alpha">
-              <span class="detalhe__rotulo">Ver detalhes</span>
-              <span class="detalhe__sinal" aria-hidden="true"></span>
-            </button>
-          </div>
-        </li>
-      </ol>
-      </div>
-    </section>
-
-    <!-- 05 · Formação -->
+    <!-- 04 · Formação -->
     <section class="section section--rosa shell" data-bg="rosa">
       <div class="section-head">
         <div>

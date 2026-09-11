@@ -36,6 +36,45 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && panel.classList.contains('is-open')) menu(false);
     });
+
+  }
+
+  /* --- Dock (desktop): os ícones crescem perto do cursor --------------- */
+
+  // Como no Dock do macOS, cada ícone cresce conforme a distância vertical
+  // até o cursor, numa curva de cosseno: o mais próximo chega a 1,5× e o
+  // efeito some a 110px. Só com mouse e sem pedido de movimento reduzido.
+  var dock = document.querySelector('.dock');
+
+  if (dock && !parado && window.matchMedia('(hover: hover)').matches) {
+    var icones = [].slice.call(dock.querySelectorAll('.dock__item'));
+    var cursorY = null;
+    var ampliando = false;
+
+    function ampliar() {
+      ampliando = false;
+      icones.forEach(function (el) {
+        var s = 1;
+        if (cursorY !== null) {
+          var r = el.getBoundingClientRect();
+          var d = Math.abs(cursorY - (r.top + r.height / 2));
+          if (d < 110) s = 1 + 0.5 * (Math.cos(Math.PI * d / 110) + 1) / 2;
+        }
+        el.style.setProperty('--s', s.toFixed(3));
+      });
+    }
+
+    dock.addEventListener('mousemove', function (e) {
+      cursorY = e.clientY;
+      if (ampliando) return;
+      ampliando = true;
+      requestAnimationFrame(ampliar);
+    });
+
+    dock.addEventListener('mouseleave', function () {
+      cursorY = null;
+      ampliar();
+    });
   }
 
   /* --- Rolagem: progresso e paralaxe ---------------------------------- */
